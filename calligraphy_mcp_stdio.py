@@ -56,104 +56,88 @@ LOCAL_MCP_TOOLS_SCHEMA: List[Dict[str, Any]] = [
     {
         "name": "analyze_kicad_pcb",
         "title": "Analyze KiCad PCB Layout",
-        "description": (
-            "Parse and analyze a KiCad `.kicad_pcb` board locally (from `pcb_text` or `project_path`). "
-            "Extracts copper layer stackup, board outline dimensions (mm), footprint count, SMD vs THT pad counts, "
-            "fine-pitch (<=0.50mm) pad count, net count, routed trace/arc segment statistics, and via count."
-        ),
-        "annotations": {
-            "title": "Analyze KiCad PCB Layout",
-            "readOnlyHint": True,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": False,
-        },
+        "description": "Parse a .kicad_pcb file for layers, outline dimensions, pads, fine-pitch density, nets, and tracks.",
+        "annotations": {"title": "Analyze KiCad PCB Layout", "readOnlyHint": True, "destructiveHint": False, "idempotentHint": True, "openWorldHint": False},
         "inputSchema": {
             "type": "object",
             "properties": {
-                "pcb_text": {"type": "string", "description": "Raw `.kicad_pcb` S-expression text"},
-                "project_path": {"type": "string", "description": "Local filesystem path to a `.kicad_pcb` file"},
+                "pcb_text": {"type": "string", "description": "Raw .kicad_pcb S-expression.", "examples": ["(kicad_pcb (version 20240108))"]},
+                "project_path": {"type": "string", "description": "Path to .kicad_pcb file.", "examples": ["board.kicad_pcb"]},
             },
             "required": [],
+            "examples": [{"pcb_text": "(kicad_pcb (version 20240108))"}],
         },
     },
     {
         "name": "analyze_specctra_dsn",
         "title": "Analyze Specctra DSN Autorouter File",
-        "description": (
-            "Parse and analyze a Specctra `.dsn` PCB autorouter file locally (from `dsn_text` or `project_path`). "
-            "Extracts units, resolution, signal/power copper layers, board boundary dimensions, component count, "
-            "netlist summary, and design rule clearances/widths."
-        ),
-        "annotations": {
-            "title": "Analyze Specctra DSN Autorouter File",
-            "readOnlyHint": True,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": False,
-        },
+        "description": "Parse a Specctra .dsn file for resolution, copper layers, boundary, components, nets, and design rules.",
+        "annotations": {"title": "Analyze Specctra DSN Autorouter File", "readOnlyHint": True, "destructiveHint": False, "idempotentHint": True, "openWorldHint": False},
         "inputSchema": {
             "type": "object",
             "properties": {
-                "dsn_text": {"type": "string", "description": "Raw Specctra `.dsn` text"},
-                "project_path": {"type": "string", "description": "Local filesystem path to a `.dsn` file"},
+                "dsn_text": {"type": "string", "description": "Raw Specctra .dsn text.", "examples": ["(pcb design.dsn (resolution um 10))"]},
+                "project_path": {"type": "string", "description": "Path to .dsn file.", "examples": ["design.dsn"]},
             },
             "required": [],
+            "examples": [{"dsn_text": "(pcb design.dsn (resolution um 10))"}],
         },
     },
     {
         "name": "calculate_pcb_trace_impedance",
         "title": "Calculate PCB Trace Impedance & IPC-2152 Current",
-        "description": (
-            "Local PCB transmission-line impedance & IPC-2152 trace current calculator. "
-            "Computes single-ended microstrip/stripline Z0 (Ohms), edge-coupled differential Zdiff (Ohms), "
-            "propagation delay (ps/mm), and recommended trace width for a target impedance or DC current (Amps)."
-        ),
-        "annotations": {
-            "title": "Calculate PCB Trace Impedance & IPC-2152 Current",
-            "readOnlyHint": True,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": False,
-        },
+        "description": "Compute microstrip/stripline Z0, differential Zdiff, propagation delay, and IPC-2152 current capacity.",
+        "annotations": {"title": "Calculate PCB Trace Impedance & IPC-2152 Current", "readOnlyHint": True, "destructiveHint": False, "idempotentHint": True, "openWorldHint": False},
         "inputSchema": {
             "type": "object",
             "properties": {
-                "mode": {"type": "string", "enum": ["microstrip", "stripline"], "default": "microstrip", "description": "Transmission-line geometry (microstrip or stripline)"},
-                "trace_width_mm": {"type": "number", "default": 0.15, "description": "Trace width W in mm"},
-                "trace_spacing_mm": {"type": "number", "default": 0.15, "description": "Edge-to-edge spacing S in mm for differential pair"},
-                "dielectric_height_mm": {"type": "number", "default": 0.20, "description": "Dielectric height H to reference plane in mm"},
-                "copper_weight_oz": {"type": "number", "default": 1.0, "description": "Copper weight in oz/ft^2 (1.0 oz = 0.035 mm)"},
-                "er": {"type": "number", "default": 4.4, "description": "Relative permittivity Er of substrate (FR-4 = 4.4)"},
-                "current_amps": {"type": "number", "default": 1.0, "description": "Target DC current in Amps for IPC-2152 temp rise check"},
-                "max_temp_rise_c": {"type": "number", "default": 10.0, "description": "Maximum allowed temperature rise in Celsius"},
+                "mode": {"type": "string", "enum": ["microstrip", "stripline"], "default": "microstrip", "description": "Line geometry.", "examples": ["microstrip"]},
+                "trace_width_mm": {"type": "number", "default": 0.15, "description": "Width W (mm).", "examples": [0.15]},
+                "trace_spacing_mm": {"type": "number", "default": 0.15, "description": "Spacing S (mm).", "examples": [0.15]},
+                "dielectric_height_mm": {"type": "number", "default": 0.20, "description": "Height H (mm).", "examples": [0.20]},
+                "copper_weight_oz": {"type": "number", "default": 1.0, "description": "Copper weight (oz).", "examples": [1.0]},
+                "er": {"type": "number", "default": 4.4, "description": "Substrate Er.", "examples": [4.4]},
+                "current_amps": {"type": "number", "default": 1.0, "description": "DC current (A).", "examples": [1.0]},
+                "max_temp_rise_c": {"type": "number", "default": 10.0, "description": "Max temp rise (C).", "examples": [10.0]},
             },
             "required": [],
+            "examples": [{"mode": "microstrip", "trace_width_mm": 0.25, "dielectric_height_mm": 0.19, "er": 4.29}],
         },
     },
     {
         "name": "audit_pcb_dfm_rules",
         "title": "Audit PCB DFM Fabrication Rules",
-        "description": (
-            "Run a local Design-for-Manufacturing (DFM) rule check on a `.kicad_pcb` or `.dsn` file against "
-            "standard 2-layer or 4-layer fabrication limits (minimum trace width, clearance, via hole diameter, "
-            "and annular ring width)."
-        ),
-        "annotations": {
-            "title": "Audit PCB DFM Fabrication Rules",
-            "readOnlyHint": True,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": False,
-        },
+        "description": "Audit .kicad_pcb or .dsn trace widths, clearances, drills, and annular rings against 2L/4L/HDI fab rules.",
+        "annotations": {"title": "Audit PCB DFM Fabrication Rules", "readOnlyHint": True, "destructiveHint": False, "idempotentHint": True, "openWorldHint": False},
         "inputSchema": {
             "type": "object",
             "properties": {
-                "pcb_text": {"type": "string", "description": "Raw `.kicad_pcb` or `.dsn` file content"},
-                "project_path": {"type": "string", "description": "Local path to `.kicad_pcb` or `.dsn` file"},
-                "fab_tier": {"type": "string", "enum": ["standard_2l", "standard_4l", "fine_hdi"], "default": "standard_2l", "description": "Target fabrication rule tier"},
+                "pcb_text": {"type": "string", "description": "Raw .kicad_pcb or .dsn content.", "examples": ["(kicad_pcb (version 20240108))"]},
+                "project_path": {"type": "string", "description": "Path to .kicad_pcb or .dsn file.", "examples": ["board.kicad_pcb"]},
+                "fab_tier": {"type": "string", "enum": ["standard_2l", "standard_4l", "fine_hdi"], "default": "standard_2l", "description": "Fab rule tier.", "examples": ["standard_4l"]},
             },
             "required": [],
+            "examples": [{"fab_tier": "standard_4l", "pcb_text": "(kicad_pcb (version 20240108))"}],
+        },
+    },
+    {
+        "name": "audit_pre_route_rf_and_fab_stackup",
+        "title": "Audit Pre-Route Vendor Stackup, 50-Ohm RF & VIPPO Rules",
+        "description": "Validate vendor stackup, 50-Ohm microstrip/CPWG width, 3*H1 ground pullback, and VIPPO rules.",
+        "annotations": {"title": "Audit Pre-Route Vendor Stackup, 50-Ohm RF & VIPPO Rules", "readOnlyHint": True, "destructiveHint": False, "idempotentHint": True, "openWorldHint": False},
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "pcb_text": {"type": "string", "description": "Raw .kicad_pcb S-expression.", "examples": ["(kicad_pcb (version 20240108))"]},
+                "project_path": {"type": "string", "description": "Path to .kicad_pcb file.", "examples": ["board.kicad_pcb"]},
+                "top_prepreg_h1_mm": {"type": "number", "default": 0.19, "description": "Top prepreg H1 (mm).", "examples": [0.19]},
+                "prepreg_er": {"type": "number", "default": 4.29, "description": "Prepreg Er.", "examples": [4.29]},
+                "outer_copper_um": {"type": "number", "default": 35.0, "description": "Outer copper (um).", "examples": [35.0]},
+                "transmission_line_mode": {"type": "string", "enum": ["isolated_microstrip", "cpwg"], "default": "isolated_microstrip", "description": "RF line mode.", "examples": ["isolated_microstrip"]},
+                "vippo_mode": {"type": "string", "enum": ["disallow_via_in_paste", "allow_vippo_type_vii"], "default": "disallow_via_in_paste", "description": "VIPPO policy.", "examples": ["disallow_via_in_paste"]},
+            },
+            "required": [],
+            "examples": [{"top_prepreg_h1_mm": 0.19, "prepreg_er": 4.29, "transmission_line_mode": "isolated_microstrip"}],
         },
     },
 ]
@@ -162,326 +146,178 @@ CLOUD_MCP_TOOLS_SCHEMA: List[Dict[str, Any]] = [
     {
         "name": "calligraphy_list_gallery_boards",
         "title": "List Verified 0-DRC Benchmark Gallery Boards",
-        "description": (
-            "List the 13 conquered open-source PCB benchmark boards (100.0% routed, 0 native KiCad copper DRC violations) "
-            "and available 1-click sample demo IDs ('2l_rp2040', '2l_stickhub', '4l_carrier')."
-        ),
-        "annotations": {
-            "title": "List Verified 0-DRC Benchmark Gallery Boards",
-            "readOnlyHint": True,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": True,
-        },
+        "description": "List verified 0-DRC benchmark PCBs and sample demo IDs ('2l_rp2040', '2l_stickhub', '4l_carrier').",
+        "annotations": {"title": "List Verified 0-DRC Benchmark Gallery Boards", "readOnlyHint": True, "destructiveHint": False, "idempotentHint": True, "openWorldHint": True},
         "inputSchema": {
             "type": "object",
             "properties": {},
+            "examples": [{}],
         },
     },
     {
         "name": "calligraphy_preflight_audit",
         "title": "Run Pre-Flight CAD Doctor & Instant Tier Quote",
-        "description": (
-            "Inspect a .kicad_pcb file or .zip project bundle (including atopile/tscircuit/Altium/Allegro builds), "
-            "verify outline/pad readiness, and return a deterministic 3-Lever NRE-anchored price quote ($149 vibe_micro "
-            "for <=150 pads up to $1,495+ route_3d). "
-            "Mode A (Zero-File Demo): Pass `sample_id='2l_rp2040'` (or `'2l_stickhub'`, `'4l_carrier'`). "
-            "Mode B (User's Local Board): Pass a local file path in `project_path` (stdio mode) or pass its contents in "
-            "`pcb_text` + `filename` (or `upload_b64` for `.PcbDoc`/`.zip`)."
-        ),
-        "annotations": {
-            "title": "Run Pre-Flight CAD Doctor & Instant Tier Quote",
-            "readOnlyHint": True,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": True,
-        },
+        "description": "Inspect a PCB (.kicad_pcb, .dsn, .PcbDoc, .zip) or sample_id ('2l_rp2040') and return an instant price quote.",
+        "annotations": {"title": "Run Pre-Flight CAD Doctor & Instant Tier Quote", "readOnlyHint": True, "destructiveHint": False, "idempotentHint": True, "openWorldHint": True},
         "inputSchema": {
             "type": "object",
             "properties": {
-                "sample_id": {"type": "string", "description": "Optional built-in sample board ID ('2l_rp2040', '2l_stickhub', '4l_carrier')"},
-                "pcb_text": {"type": "string", "description": "Raw CAD file contents (.kicad_pcb, .dsn, .ato, .tsx, .xml) for remote HTTP MCP calls"},
-                "upload_b64": {"type": "string", "description": "Base64-encoded CAD file or .zip bundle for remote HTTP MCP calls"},
-                "filename": {"type": "string", "default": "board.kicad_pcb"},
-                "customer_email": {"type": "string", "default": "agent@customer.io", "description": "Engineer email for 30-day ECO license matching"},
-                "requested_sku": {
-                    "type": "string",
-                    "enum": ["vibe_micro", "basic_2l", "intro_trial", "dfm_fix", "route_3d", "premium_hs", "turnkey_full"],
-                    "default": "route_3d",
-                },
-                "include_eco_pass": {"type": "boolean", "default": False, "description": "+50% 30-Day Unlimited ECO Re-Spin Pass"},
-                "rush_delivery": {"type": "boolean", "default": False, "description": "+35% Instant <45m Enclave Rush Turnaround"},
-                "project_path": {"type": "string", "description": "Local stdio CLI path or built-in sample ID ('2l_rp2040', '2l_stickhub', '4l_carrier')."},
+                "sample_id": {"type": "string", "description": "Sample ID ('2l_rp2040', '2l_stickhub', '4l_carrier').", "examples": ["2l_rp2040"]},
+                "pcb_text": {"type": "string", "description": "Raw CAD text (.kicad_pcb, .dsn, .ato, .tsx).", "examples": ["(kicad_pcb (version 20240108))"]},
+                "upload_b64": {"type": "string", "description": "Base64 CAD or .zip payload.", "examples": ["UEsDBBQAAAAIA..."]},
+                "filename": {"type": "string", "default": "board.kicad_pcb", "description": "CAD filename.", "examples": ["board.kicad_pcb"]},
+                "customer_email": {"type": "string", "default": "agent@customer.io", "description": "Engineer email.", "examples": ["eng@hardware.io"]},
+                "requested_sku": {"type": "string", "enum": ["vibe_micro", "basic_2l", "intro_trial", "dfm_fix", "route_3d", "premium_hs", "turnkey_full"], "default": "route_3d", "description": "Tier SKU.", "examples": ["vibe_micro"]},
+                "include_eco_pass": {"type": "boolean", "default": False, "description": "+50% 30-Day ECO Pass.", "examples": [False]},
+                "rush_delivery": {"type": "boolean", "default": False, "description": "+35% Rush Turnaround.", "examples": [False]},
+                "project_path": {"type": "string", "description": "Local path or sample ID.", "examples": ["2l_rp2040"]},
             },
             "required": [],
+            "examples": [{"sample_id": "2l_rp2040", "customer_email": "eng@hardware.io", "requested_sku": "vibe_micro"}],
         },
     },
     {
         "name": "calligraphy_compile_board",
         "title": "Compile & Route PCB in Cloud Enclave",
-        "description": (
-            "Compile a PCB through Calligraphy EDA (3D HDI synthesis + Snowman teardrop pad fillets "
-            "+ Zero-VIPPO DFM surgery + 3D nodal G*V=I physics) and return 0-DRC telemetry, preview crops, "
-            "a single clickable Stripe Checkout URL, and watch-only per-job USDT/USDC stablecoin payment instructions. "
-            "Mode A (Zero-File Demo): Pass `sample_id='2l_rp2040'` (or `'2l_stickhub'`, `'4l_carrier'`). "
-            "Mode B (User's Local Board): Pass a local file path in `project_path` (stdio mode) or pass its contents in "
-            "`pcb_text` + `filename` (or `upload_b64` for `.PcbDoc`/`.zip`)."
-        ),
-        "annotations": {
-            "title": "Compile & Route PCB in Cloud Enclave",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": False,
-            "openWorldHint": True,
-        },
+        "description": "Route a PCB to 100% completion and 0 DRC violations; returns previews and Stripe/USDC payment links.",
+        "annotations": {"title": "Compile & Route PCB in Cloud Enclave", "readOnlyHint": False, "destructiveHint": False, "idempotentHint": False, "openWorldHint": True},
         "inputSchema": {
             "type": "object",
             "properties": {
-                "sample_id": {"type": "string", "description": "Optional built-in sample board ID ('2l_rp2040', '2l_stickhub', '4l_carrier')"},
-                "pcb_text": {"type": "string", "description": "Raw CAD file contents (.kicad_pcb, .dsn, .ato, .tsx, .xml) for remote HTTP MCP calls"},
-                "upload_b64": {"type": "string", "description": "Base64-encoded CAD file or .zip bundle for remote HTTP MCP calls"},
-                "filename": {"type": "string", "default": "board.kicad_pcb"},
-                "customer_email": {"type": "string", "default": "agent@customer.io"},
-                "requested_sku": {
-                    "type": "string",
-                    "enum": ["vibe_micro", "basic_2l", "intro_trial", "dfm_fix", "route_3d", "premium_hs", "turnkey_full"],
-                    "default": "route_3d",
-                },
-                "include_eco_pass": {"type": "boolean", "default": False},
-                "rush_delivery": {"type": "boolean", "default": False},
-                "tos_accepted": {"type": "boolean", "default": True},
-                "no_itar_certified": {"type": "boolean", "default": True},
-                "export_control_certified": {"type": "boolean", "default": True},
-                "retention_policy": {
-                    "type": "string",
-                    "enum": ["auto_purge_on_download", "expire_24h"],
-                    "default": "auto_purge_on_download",
-                },
-                "project_path": {"type": "string", "description": "Local stdio CLI path or built-in sample ID ('2l_rp2040', '2l_stickhub', '4l_carrier')."},
+                "sample_id": {"type": "string", "description": "Sample ID ('2l_rp2040', '2l_stickhub', '4l_carrier').", "examples": ["2l_rp2040"]},
+                "pcb_text": {"type": "string", "description": "Raw CAD text (.kicad_pcb, .dsn, .ato, .tsx).", "examples": ["(kicad_pcb (version 20240108))"]},
+                "upload_b64": {"type": "string", "description": "Base64 CAD or .zip payload.", "examples": ["UEsDBBQAAAAIA..."]},
+                "filename": {"type": "string", "default": "board.kicad_pcb", "description": "CAD filename.", "examples": ["board.kicad_pcb"]},
+                "customer_email": {"type": "string", "default": "agent@customer.io", "description": "Engineer email.", "examples": ["eng@hardware.io"]},
+                "requested_sku": {"type": "string", "enum": ["vibe_micro", "basic_2l", "intro_trial", "dfm_fix", "route_3d", "premium_hs", "turnkey_full"], "default": "route_3d", "description": "Tier SKU.", "examples": ["vibe_micro"]},
+                "include_eco_pass": {"type": "boolean", "default": False, "description": "+50% 30-Day ECO Pass.", "examples": [False]},
+                "rush_delivery": {"type": "boolean", "default": False, "description": "+35% Rush Turnaround.", "examples": [False]},
+                "tos_accepted": {"type": "boolean", "default": True, "description": "Accept ToS.", "examples": [True]},
+                "no_itar_certified": {"type": "boolean", "default": True, "description": "Non-ITAR check.", "examples": [True]},
+                "export_control_certified": {"type": "boolean", "default": True, "description": "Export compliance.", "examples": [True]},
+                "retention_policy": {"type": "string", "enum": ["auto_purge_on_download", "expire_24h"], "default": "auto_purge_on_download", "description": "Retention policy.", "examples": ["auto_purge_on_download"]},
+                "project_path": {"type": "string", "description": "Local path or sample ID.", "examples": ["2l_rp2040"]},
             },
             "required": [],
+            "examples": [{"sample_id": "2l_rp2040", "customer_email": "eng@hardware.io", "requested_sku": "vibe_micro"}],
         },
     },
     {
         "name": "calligraphy_get_job_status",
         "title": "Get PCB Synthesis Job Status",
-        "description": (
-            "Query the compilation and payment status of a Calligraphy EDA job (`job_id`). "
-            "When `status` is `COMPLETED_AWAITING_PAYMENT`, returns `stablecoin_payment_instructions` "
-            "with the job's unique watch-only `deposit_address` (`0x...`) for autonomous USDT/USDC checkout."
-        ),
-        "annotations": {
-            "title": "Get PCB Synthesis Job Status",
-            "readOnlyHint": True,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": True,
-        },
+        "description": "Query compilation, verification, and payment status for a job_id.",
+        "annotations": {"title": "Get PCB Synthesis Job Status", "readOnlyHint": True, "destructiveHint": False, "idempotentHint": True, "openWorldHint": True},
         "inputSchema": {
             "type": "object",
             "properties": {
-                "job_id": {"type": "string", "description": "Job ID returned by calligraphy_compile_board"},
+                "job_id": {"type": "string", "description": "Job ID from calligraphy_compile_board.", "examples": ["job_a1b2c3d4e5f6"]},
             },
             "required": ["job_id"],
+            "examples": [{"job_id": "job_a1b2c3d4e5f6"}],
         },
     },
     {
         "name": "calligraphy_verify_stablecoin_payment",
         "title": "Verify On-Chain Stablecoin Payment",
-        "description": (
-            "Submit an on-chain `USDT` or `USDC` transaction hash (`tx_hash`) sent to the job's unique "
-            "watch-only `deposit_address` on `base`, `arbitrum`, `polygon`, or `ethereum` to receive a "
-            "private HMAC-SHA256 payment receipt (`receipt_hmac_sha256`) and immediately unlock "
-            "`calligraphy_download_fab_bundle` with zero human browser intervention."
-        ),
-        "annotations": {
-            "title": "Verify On-Chain Stablecoin Payment",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": True,
-        },
+        "description": "Verify an on-chain USDT/USDC tx_hash to unlock turnkey fabrication bundle downloads.",
+        "annotations": {"title": "Verify On-Chain Stablecoin Payment", "readOnlyHint": False, "destructiveHint": False, "idempotentHint": True, "openWorldHint": True},
         "inputSchema": {
             "type": "object",
             "properties": {
-                "job_id": {"type": "string", "description": "Job ID returned by calligraphy_compile_board"},
-                "tx_hash": {"type": "string", "description": "0x-prefixed 64-character hex EVM transaction hash"},
-                "token": {
-                    "type": "string",
-                    "enum": ["USDT", "USDC"],
-                    "default": "USDT",
-                    "description": "Stablecoin symbol (`USDT` or `USDC`)",
-                },
-                "network": {
-                    "type": "string",
-                    "enum": ["base", "arbitrum", "polygon", "ethereum"],
-                    "default": "base",
-                    "description": "EVM settlement network (`base` recommended for near-zero gas & Coinbase treasury)",
-                },
+                "job_id": {"type": "string", "description": "Job ID.", "examples": ["job_a1b2c3d4e5f6"]},
+                "tx_hash": {"type": "string", "description": "0x-prefixed EVM tx hash.", "examples": ["0x1111111111111111111111111111111111111111111111111111111111111111"]},
+                "token": {"type": "string", "enum": ["USDT", "USDC"], "default": "USDT", "description": "Token symbol.", "examples": ["USDC"]},
+                "network": {"type": "string", "enum": ["base", "arbitrum", "polygon", "ethereum"], "default": "base", "description": "EVM network.", "examples": ["base"]},
             },
             "required": ["job_id", "tx_hash"],
+            "examples": [{"job_id": "job_a1b2c3d4e5f6", "tx_hash": "0x1111111111111111111111111111111111111111111111111111111111111111", "token": "USDC", "network": "base"}],
         },
     },
     {
         "name": "calligraphy_download_fab_bundle",
         "title": "Download Unlocked Turnkey Fabrication Bundle",
-        "description": (
-            "Download the unlocked routed .kicad_pcb and turnkey JLCPCB/PCBWay .zip bundle "
-            "(Gerbers, Excellon drills, IPC-D-356, BOM, CPL, and 3D HTML5 viewer) once paid via "
-            "Stripe Checkout, autonomous USDT/USDC stablecoin verification, or active 30-day board license."
-        ),
-        "annotations": {
-            "title": "Download Unlocked Turnkey Fabrication Bundle",
-            "readOnlyHint": True,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": True,
-        },
+        "description": "Retrieve the unlocked routed .kicad_pcb and turnkey .zip bundle (Gerbers, drills, BOM/CPL) once paid.",
+        "annotations": {"title": "Download Unlocked Turnkey Fabrication Bundle", "readOnlyHint": True, "destructiveHint": False, "idempotentHint": True, "openWorldHint": True},
         "inputSchema": {
             "type": "object",
             "properties": {
-                "job_id": {"type": "string", "description": "Job ID returned by calligraphy_compile_board"},
-                "include_bundle_b64": {
-                    "type": "boolean",
-                    "default": False,
-                    "description": "Set True over remote HTTP to inline the base64 .zip bytes and trigger auto-purge immediately; defaults to False so the returned download_zip_url remains active for browser/curl download.",
-                },
-                "output_dir": {"type": "string", "description": "Local directory to save unlocked files (stdio CLI mode)"},
+                "job_id": {"type": "string", "description": "Job ID.", "examples": ["job_a1b2c3d4e5f6"]},
+                "include_bundle_b64": {"type": "boolean", "default": False, "description": "Inline base64 .zip bytes.", "examples": [False]},
+                "output_dir": {"type": "string", "description": "Local output directory.", "examples": ["./fab_out"]},
             },
             "required": ["job_id"],
+            "examples": [{"job_id": "job_a1b2c3d4e5f6", "include_bundle_b64": False}],
         },
     },
     {
         "name": "calligraphy_lookup_b2b_invoice",
         "title": "Look Up B2B Tax Invoice & Custody Certificate",
-        "description": (
-            "Look up a Calligraphy EDA job and generate a B2B Tax Invoice & Chain-of-Custody Certificate "
-            "with custom PO number and company name."
-        ),
-        "annotations": {
-            "title": "Look Up B2B Tax Invoice & Custody Certificate",
-            "readOnlyHint": True,
-            "destructiveHint": False,
-            "idempotentHint": True,
-            "openWorldHint": True,
-        },
+        "description": "Generate a B2B Tax Invoice and Chain-of-Custody Certificate for a job_id.",
+        "annotations": {"title": "Look Up B2B Tax Invoice & Custody Certificate", "readOnlyHint": True, "destructiveHint": False, "idempotentHint": True, "openWorldHint": True},
         "inputSchema": {
             "type": "object",
             "properties": {
-                "job_id": {"type": "string", "description": "Job ID returned by calligraphy_compile_board"},
-                "customer_email": {"type": "string", "default": "agent@customer.io"},
-                "po_number": {"type": "string", "default": ""},
-                "company_name": {"type": "string", "default": ""},
+                "job_id": {"type": "string", "description": "Job ID.", "examples": ["job_a1b2c3d4e5f6"]},
+                "customer_email": {"type": "string", "default": "agent@customer.io", "description": "Customer email.", "examples": ["eng@hardware.io"]},
+                "po_number": {"type": "string", "default": "", "description": "PO number.", "examples": ["PO-2026-104"]},
+                "company_name": {"type": "string", "default": "", "description": "Company name.", "examples": ["Acme Robotics Inc."]},
             },
             "required": ["job_id"],
+            "examples": [{"job_id": "job_a1b2c3d4e5f6", "customer_email": "eng@hardware.io", "po_number": "PO-2026-104"}],
         },
     },
     {
         "name": "calligraphy_create_coinbase_checkout",
         "title": "Create Coinbase Base L2 USDC Checkout Session",
-        "description": (
-            "Create a 1-Click Coinbase Pay / Coinbase Onchain Payment Protocol checkout session "
-            "(and x402 AI-agent payment URL) settling in USDC on Base (chain_id=8453) with automatic "
-            "DEX token conversion and zero gas-dust sweeping."
-        ),
-        "annotations": {
-            "title": "Create Coinbase Base L2 USDC Checkout Session",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": False,
-            "openWorldHint": True,
-        },
+        "description": "Create a Coinbase Onchain Payment & x402 checkout session settling in USDC on Base (chain_id=8453).",
+        "annotations": {"title": "Create Coinbase Base L2 USDC Checkout Session", "readOnlyHint": False, "destructiveHint": False, "idempotentHint": False, "openWorldHint": True},
         "inputSchema": {
             "type": "object",
             "required": ["job_id"],
             "properties": {
-                "job_id": {"type": "string", "description": "Job ID returned by calligraphy_compile_board."},
-                "currency": {"type": "string", "default": "USDC"},
-                "network": {"type": "string", "default": "base"},
+                "job_id": {"type": "string", "description": "Job ID.", "examples": ["job_a1b2c3d4e5f6"]},
+                "currency": {"type": "string", "default": "USDC", "description": "Token ('USDC' or 'USDT').", "examples": ["USDC"]},
+                "network": {"type": "string", "default": "base", "description": "Network ('base', 'ethereum').", "examples": ["base"]},
             },
-        },
-    },
-    {
-        "name": "calligraphy_purge_job_vault",
-        "title": "Purge Enclave Job Vault",
-        "description": (
-            "Immediately shred all enclave CAD and synthesis artifacts for job_id and return a "
-            "cryptographically signed CertificateOfDestruction (zero_retention_verified=True)."
-        ),
-        "annotations": {
-            "title": "Purge Enclave Job Vault",
-            "readOnlyHint": False,
-            "destructiveHint": True,
-            "idempotentHint": True,
-            "openWorldHint": True,
-        },
-        "inputSchema": {
-            "type": "object",
-            "required": ["job_id"],
-            "properties": {
-                "job_id": {"type": "string", "description": "Job ID to shred immediately."},
-            },
+            "examples": [{"job_id": "job_a1b2c3d4e5f6", "currency": "USDC", "network": "base"}],
         },
     },
     {
         "name": "calligraphy_route_pcb",
         "title": "Synthesize & Route Multi-Layer PCB",
-        "description": (
-            "Alias for calligraphy_compile_board: synthesize and route a PCB through Calligraphy EDA "
-            "(0 opens, 0 DRC) and return Stripe, Coinbase Pay (x402), and watch-only USDT/USDC payment instructions. "
-            "Mode A (Zero-File Demo): Pass `sample_id='2l_rp2040'` (or `'2l_stickhub'`, `'4l_carrier'`). "
-            "Mode B (User's Local Board): Pass a local file path in `project_path` (stdio mode) or pass its contents in "
-            "`pcb_text` + `filename` (or `upload_b64` for `.PcbDoc`/`.zip`)."
-        ),
-        "annotations": {
-            "title": "Synthesize & Route Multi-Layer PCB",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": False,
-            "openWorldHint": True,
-        },
+        "description": "Alias for calligraphy_compile_board: route a PCB (0 opens, 0 DRC) from sample_id or pcb_text.",
+        "annotations": {"title": "Synthesize & Route Multi-Layer PCB", "readOnlyHint": False, "destructiveHint": False, "idempotentHint": False, "openWorldHint": True},
         "inputSchema": {
             "type": "object",
             "properties": {
-                "sample_id": {"type": "string", "description": "Optional built-in sample board ID ('2l_rp2040', '2l_stickhub', '4l_carrier')"},
-                "pcb_text": {"type": "string", "description": "Raw CAD file contents (.kicad_pcb, .dsn, .ato, .tsx, .xml) for remote HTTP MCP calls"},
-                "upload_b64": {"type": "string", "description": "Base64-encoded CAD file or .zip bundle for remote HTTP MCP calls"},
-                "filename": {"type": "string", "default": "board.kicad_pcb"},
-                "customer_email": {"type": "string", "default": "agent@customer.io"},
-                "requested_sku": {
-                    "type": "string",
-                    "enum": ["vibe_micro", "basic_2l", "intro_trial", "dfm_fix", "route_3d", "premium_hs", "turnkey_full"],
-                    "default": "route_3d",
-                },
-                "project_path": {"type": "string", "description": "Local stdio CLI path or built-in sample ID ('2l_rp2040', '2l_stickhub', '4l_carrier')."},
+                "sample_id": {"type": "string", "description": "Sample ID ('2l_rp2040', '2l_stickhub', '4l_carrier').", "examples": ["2l_rp2040"]},
+                "pcb_text": {"type": "string", "description": "Raw CAD text (.kicad_pcb, .dsn).", "examples": ["(kicad_pcb (version 20240108))"]},
+                "upload_b64": {"type": "string", "description": "Base64 CAD or .zip payload.", "examples": ["UEsDBBQAAAAIA..."]},
+                "filename": {"type": "string", "default": "board.kicad_pcb", "description": "CAD filename.", "examples": ["board.kicad_pcb"]},
+                "customer_email": {"type": "string", "default": "agent@customer.io", "description": "Engineer email.", "examples": ["eng@hardware.io"]},
+                "requested_sku": {"type": "string", "enum": ["vibe_micro", "basic_2l", "intro_trial", "dfm_fix", "route_3d", "premium_hs", "turnkey_full"], "default": "route_3d", "description": "Tier SKU.", "examples": ["vibe_micro"]},
+                "project_path": {"type": "string", "description": "Local path or sample ID.", "examples": ["2l_rp2040"]},
             },
             "required": [],
+            "examples": [{"sample_id": "2l_rp2040", "customer_email": "eng@hardware.io", "requested_sku": "vibe_micro"}],
         },
     },
     {
         "name": "calligraphy_request_ip_whitelist",
         "title": "Request Enterprise IP Whitelist Quota",
-        "description": (
-            "Submit a Support Whitelist Request for an engineering team, corporate NAT IP, or PCB layout "
-            "agency that needs higher daily compilation write limits (e.g. 25–100 compiles/day)."
-        ),
-        "annotations": {
-            "title": "Request Enterprise IP Whitelist Quota",
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": False,
-            "openWorldHint": True,
-        },
+        "description": "Request a higher daily compilation quota (25-100 jobs/day) for an engineering team or NAT IP.",
+        "annotations": {"title": "Request Enterprise IP Whitelist Quota", "readOnlyHint": False, "destructiveHint": False, "idempotentHint": False, "openWorldHint": True},
         "inputSchema": {
             "type": "object",
             "properties": {
-                "customer_email": {"type": "string", "description": "Work or agency email address"},
-                "organization_name": {"type": "string", "description": "Company or PCB layout agency name"},
-                "reason": {"type": "string", "description": "Brief description of multi-board or team workflow"},
-                "requested_daily_limit": {"type": "integer", "default": 25},
-                "client_ip": {"type": "string", "default": "127.0.0.1"},
+                "customer_email": {"type": "string", "description": "Work email.", "examples": ["lead@robotics.io"]},
+                "organization_name": {"type": "string", "description": "Company name.", "examples": ["Acme Robotics Inc."]},
+                "reason": {"type": "string", "description": "Team workflow.", "examples": ["CI/CD regression routing"]},
+                "requested_daily_limit": {"type": "integer", "default": 25, "description": "Daily limit.", "examples": [25]},
+                "client_ip": {"type": "string", "default": "127.0.0.1", "description": "IP to whitelist.", "examples": ["203.0.113.10"]},
             },
             "required": ["customer_email", "organization_name", "reason"],
+            "examples": [{"customer_email": "lead@robotics.io", "organization_name": "Acme Robotics Inc.", "reason": "Team CI/CD"}],
         },
     },
 ]
@@ -726,8 +562,12 @@ def handle_jsonrpc_message(msg: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         return None
 
     if method == "initialize":
-        client_proto = str(params.get("protocolVersion") or "2024-11-05")
-        proto_ver = client_proto if client_proto in ("2025-11-05", "2025-03-26", "2024-11-05") else "2024-11-05"
+        client_proto = str(params.get("protocolVersion") or "2026-07-28")
+        supported_protos = ("2026-07-28", "2025-11-05", "2025-06-18", "2025-03-26", "2024-11-05")
+        if client_proto in supported_protos or client_proto.startswith("2025-") or client_proto.startswith("2026-"):
+            proto_ver = client_proto
+        else:
+            proto_ver = "2026-07-28"
         return {
             "jsonrpc": "2.0",
             "id": req_id,
@@ -741,7 +581,7 @@ def handle_jsonrpc_message(msg: Dict[str, Any]) -> Optional[Dict[str, Any]]:
                 "serverInfo": {
                     "name": "@calligraphysystems/mcp",
                     "title": "Calligraphy EDA Autonomous PCB Physical Synthesis & Turnkey Foundry MCP",
-                    "version": "6.2.38",
+                    "version": "6.2.52",
                 },
                 "instructions": (
                     "Phase 1 (2L & 4L PCBs) is LIVE. Mode A (Zero-File Demo): call `calligraphy_preflight_audit` "

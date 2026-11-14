@@ -182,18 +182,6 @@
       }
     },
     {
-      "name": "calligraphy_purge_job_vault",
-      "title": "Purge Enclave Job Vault",
-      "description": "Cryptographically shred and purge all uploaded CAD artifacts and output bundles for a job from the cloud enclave.",
-      "annotations": {
-        "title": "Purge Enclave Job Vault",
-        "readOnlyHint": false,
-        "destructiveHint": true,
-        "idempotentHint": true,
-        "openWorldHint": true
-      }
-    },
-    {
       "name": "calligraphy_route_pcb",
       "title": "Synthesize & Route Multi-Layer PCB",
       "description": "Alias for calligraphy_compile_board to trigger autonomous multi-layer 3D PCB routing.",

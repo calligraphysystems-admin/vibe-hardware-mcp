@@ -54,6 +54,7 @@ EXPECTED_15_TOOLS = {
     "analyze_specctra_dsn": (True, False, True, False),
     "calculate_pcb_trace_impedance": (True, False, True, False),
     "audit_pcb_dfm_rules": (True, False, True, False),
+    "audit_pre_route_rf_and_fab_stackup": (True, False, True, False),
     "calligraphy_list_gallery_boards": (True, False, True, True),
     "calligraphy_preflight_audit": (True, False, True, True),
     "calligraphy_compile_board": (False, False, False, True),
@@ -62,7 +63,6 @@ EXPECTED_15_TOOLS = {
     "calligraphy_download_fab_bundle": (True, False, True, True),
     "calligraphy_lookup_b2b_invoice": (True, False, True, True),
     "calligraphy_create_coinbase_checkout": (False, False, False, True),
-    "calligraphy_purge_job_vault": (False, True, True, True),
     "calligraphy_route_pcb": (False, False, False, True),
     "calligraphy_request_ip_whitelist": (False, False, False, True),
 }
@@ -118,10 +118,11 @@ class VibeHardwareMCPTests(unittest.TestCase):
                 self.assertEqual(val, expected_val, f"{name}.{hint_key} mismatch")
 
         server_json = json.loads((REPO_ROOT / "server.json").read_text(encoding="utf-8"))
-        self.assertEqual(server_json["version"], "1.2.1")
+        self.assertEqual(server_json["version"], "1.3.0")
         self.assertEqual(len(server_json["tools"]), 15)
         for st in server_json["tools"]:
             s_ann = st.get("annotations") or {}
+            self.assertFalse(s_ann.get("destructiveHint"))
             for k in ("readOnlyHint", "destructiveHint", "idempotentHint", "openWorldHint"):
                 self.assertIsInstance(s_ann.get(k), bool)
 
