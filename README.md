@@ -47,9 +47,40 @@ docker build -t vibe-hardware-mcp .
 docker run -i --rm vibe-hardware-mcp
 ```
 
-### Option 3: Remote Streamable-HTTP Endpoint (Claude Code / Cursor)
+### Option 3: Remote Streamable-HTTP Endpoint (Claude Code, Cursor, Codex & Google Antigravity)
+
+**Claude Code:**
 ```bash
 claude mcp add --transport http calligraphy-eda https://calligraphyeda.com/api/v1/mcp
+```
+
+**OpenAI Codex:**
+```bash
+codex mcp add calligraphy-eda --url https://calligraphyeda.com/api/v1/mcp
+```
+
+**Cursor (`~/.cursor/mcp.json` or 1-Click Install):**
+[![Install MCP Server in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=calligraphy-eda&config=eyJ1cmwiOiJodHRwczovL2NhbGxpZ3JhcGh5ZWRhLmNvbS9hcGkvdjEvbWNwIn0%3D)
+
+```json
+{
+  "mcpServers": {
+    "calligraphy-eda": {
+      "url": "https://calligraphyeda.com/api/v1/mcp"
+    }
+  }
+}
+```
+
+**Google Antigravity (`mcp_config.json`):**
+```json
+{
+  "mcpServers": {
+    "calligraphy-eda": {
+      "serverUrl": "https://calligraphyeda.com/api/v1/mcp"
+    }
+  }
+}
 ```
 
 ---
