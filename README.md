@@ -83,6 +83,12 @@ codex mcp add calligraphy-eda --url https://calligraphyeda.com/api/v1/mcp
 }
 ```
 
+**xAI Grok Bot / Grok CLI (`grok.com/connectors` or `grok mcp`):**
+```bash
+grok mcp add --transport http calligraphy-eda https://calligraphyeda.com/api/v1/mcp
+```
+*(Or in **Grok Bot / `grok.com/connectors`**: click **New Connector** → **Custom** → paste `https://calligraphyeda.com/api/v1/mcp`.)*
+
 ---
 
 ## Visual Proof: `55 / 55` Verified Open-Source Benchmark Sweep (`20 / 20` `PCBench Tier T` + `13 / 13` `Tier D` + `22 / 22` Multi-ECAD at `100.0%` Completion & `0` Native KiCad 9 DRC)
